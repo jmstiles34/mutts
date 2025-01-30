@@ -1,4 +1,4 @@
-# Mutts
+# Mutts & Matches
 
 This is a SvelteKit application built with modern web technologies.
 

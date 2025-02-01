@@ -1,22 +1,15 @@
 <script lang="ts">
-	type AgeRangeProps = {
-		ageError: string;
-		minAge: string;
-		maxAge: string;
-    updateAgeRange: (a:string, b:string, c:string) => void
-	};
-
-	let { ageError, minAge, maxAge, updateAgeRange }: AgeRangeProps = $props();
+	import { filters } from '$lib/state/filters.svelte';
   
   $effect(() => {
-		if (minAge !== '' && maxAge !== '') {
-			if (parseInt(maxAge) < parseInt(minAge)) {
-				ageError = 'Maximum age must be greater than minimum age when specified.';
+		if (filters.minAge !== '' && filters.maxAge !== '') {
+			if (parseInt(filters.maxAge) < parseInt(filters.minAge)) {
+				filters.ageError = 'Maximum age must be greater than minimum age when specified.';
 			} else {
-				ageError = '';
+				filters.ageError = '';
 			}
 		} else {
-			ageError = '';
+			filters.ageError = '';
 		}
 	});
 </script>
@@ -27,28 +20,26 @@
 		<label>
 			Minimum Age:
 			<input
-				class={ageError ? 'errorAge' : ''}
+				class={filters.ageError ? 'errorAge' : ''}
 				type="number"
 				min="0"
-				bind:value={minAge}
-        oninput={() => updateAgeRange(minAge, maxAge, ageError)}
+				bind:value={filters.minAge}
 				placeholder="Enter a Number"
 			/>
 		</label>
 		<label>
 			Maximum Age:
 			<input
-				class={ageError ? 'errorAge' : ''}
+				class={filters.ageError ? 'errorAge' : ''}
 				type="number"
 				min="0"
-				bind:value={maxAge}
-        oninput={() => updateAgeRange(minAge, maxAge, ageError)}
+				bind:value={filters.maxAge}
 				placeholder="Enter a Number"
 			/>
 		</label>
-		{#if ageError}
+		{#if filters.ageError}
 			<div class="error-message">
-				{ageError}
+				{filters.ageError}
 			</div>
 		{/if}
 	</div>

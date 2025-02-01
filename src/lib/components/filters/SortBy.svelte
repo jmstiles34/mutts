@@ -1,16 +1,10 @@
 <script lang="ts">
-	type SortByProps = {
-		sortField: string;
-		sortOrder: 'asc' | 'desc';
-		updateSortBy: (a: string, b: 'asc' | 'desc') => void;
-	};
-
-	let { sortField, sortOrder, updateSortBy }: SortByProps = $props();
+	import { filters } from '$lib/state/filters.svelte';
 </script>
 
 <div class="filter-section">
 	<h3>Sort By</h3>
-	<select bind:value={sortField} onchange={() => updateSortBy(sortField, sortOrder)}>
+	<select bind:value={filters.sortField}>
 		<option value="name">Name</option>
 		<option value="breed">Breed</option>
 		<option value="age">Age</option>
@@ -22,8 +16,7 @@
 				type="radio"
 				name="sortOrder"
 				value="asc"
-				bind:group={sortOrder}
-				onchange={() => updateSortBy(sortField, sortOrder)}
+				bind:group={filters.sortOrder}
 			/>
 			Ascending
 		</label>
@@ -32,8 +25,7 @@
 				type="radio"
 				name="sortOrder"
 				value="desc"
-				bind:group={sortOrder}
-				onchange={() => updateSortBy(sortField, sortOrder)}
+				bind:group={filters.sortOrder}
 			/>
 			Descending
 		</label>

@@ -1,11 +1,20 @@
 <script lang="ts">
+	import { filters } from '$lib/state/filters.svelte';
+
 	type BreedsProps = {
 		breeds: string[];
-		selectedBreeds: Set<string>;
-		toggleBreed: (b: string) => void;
 	};
 
-	let { breeds, selectedBreeds, toggleBreed }: BreedsProps = $props();
+	let { breeds }: BreedsProps = $props();
+
+	function toggleBreed(breed: string): void {
+		if (filters.selectedBreeds.has(breed)) {
+			filters.selectedBreeds.delete(breed);
+		} else {
+			filters.selectedBreeds.add(breed);
+		}
+		filters.selectedBreeds = new Set(filters.selectedBreeds);
+	}
 </script>
 
 <div class="filter-section">
@@ -15,7 +24,7 @@
 			<label class="breed-item">
 				<input
 					type="checkbox"
-					checked={selectedBreeds.has(breed)}
+					checked={filters.selectedBreeds.has(breed)}
 					onchange={() => toggleBreed(breed)}
 				/>
 				{breed}

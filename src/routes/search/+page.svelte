@@ -8,24 +8,19 @@
 	import SortBy from '$lib/components/filters/SortBy.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import BackToTop from '$lib/components/BackToTop.svelte';
+	import { filters } from '$lib/state/filters.svelte';
+
 	let { data } = $props();
 	let breeds: string[] = $state(data.breeds);
 	let dogs: Dog[] = $state([]);
-	let selectedBreeds: Set<string> = $state(new Set());
 	let favorites: Set<Dog> = $state(new Set());
 	let currentPage: number = $state(1);
 	let totalPages: number = $state(0);
-	let itemsPerPage: number = $state(25);
 	let totalItems: number = $state(0);
 	let pages: number[] = $state([]);
-	let sortOrder: 'asc' | 'desc' = $state('asc');
 	let matchedDogId: string | null = $state(null);
 	let loading: boolean = $state(true);
 	let error: string = $state('');
-	let minAge = $state('');
-	let maxAge = $state('');
-	let ageError = $state('');
-	let sortField = $state('breed');
 	let activeTab = $state('search');
 
 	onMount(async () => {
@@ -51,21 +46,21 @@
 	});
 
 	function buildSearchString(): string {
-		let searchString = `sort=${sortField}:${sortOrder}&size=${itemsPerPage}`;
-		if (selectedBreeds.size) {
+		let searchString = `sort=${filters.sortField}:${filters.sortOrder}&size=${filters.itemsPerPage}`;
+		if (filters.selectedBreeds.size) {
 			searchString +=
-				'&' + [...selectedBreeds].map((breed) => `breeds[]=${encodeURIComponent(breed)}`).join('&');
+				'&' + [...filters.selectedBreeds].map((breed) => `breeds[]=${encodeURIComponent(breed)}`).join('&');
 		}
 
-		if (parseInt(minAge) > 0) {
-			searchString += `&ageMin=${minAge}`;
+		if (parseInt(filters.minAge) > 0) {
+			searchString += `&ageMin=${filters.minAge}`;
 		}
-		if (parseInt(maxAge) > 0) {
-			searchString += `&ageMax=${maxAge}`;
+		if (parseInt(filters.maxAge) > 0) {
+			searchString += `&ageMax=${filters.maxAge}`;
 		}
 
 		if (currentPage > 1) {
-			searchString += `&from=${(currentPage - 1) * itemsPerPage}`;
+			searchString += `&from=${(currentPage - 1) * filters.itemsPerPage}`;
 		}
 
 		return searchString;
@@ -145,15 +140,6 @@
 		}
 	}
 
-	function toggleBreed(breed: string): void {
-		if (selectedBreeds.has(breed)) {
-			selectedBreeds.delete(breed);
-		} else {
-			selectedBreeds.add(breed);
-		}
-		selectedBreeds = new Set(selectedBreeds);
-	}
-
 	function toggleFavorite(dog: Dog): void {
 		if (favorites.has(dog)) {
 			favorites.delete(dog);
@@ -161,17 +147,6 @@
 			favorites.add(dog);
 		}
 		favorites = new Set(favorites);
-	}
-
-	function updateAgeRange(min: string, max: string, error: string): void {
-		minAge = min;
-		maxAge = max;
-		ageError = error;
-	}
-
-	function updateSortBy(field: string, order: 'asc' | 'desc'): void {
-		sortField = field;
-		sortOrder = order;
 	}
 
 	async function handlePageChange(newPage: number): Promise<void> {
@@ -182,7 +157,7 @@
 	}
 	async function handleItemsPerPageChange(event: Event): Promise<void> {
 		const target = event.target as HTMLSelectElement;
-		itemsPerPage = Number(target.value);
+		filters.itemsPerPage = Number(target.value);
 		searchDogs();
 	}
 
@@ -194,12 +169,15 @@
 
 <section>
 	<div class="filters">
-		<Breeds {breeds} {selectedBreeds} {toggleBreed} />
-		<AgeRange {ageError} {minAge} {maxAge} {updateAgeRange} />
-		<SortBy {sortField} {sortOrder} {updateSortBy} />
+		<Breeds {breeds} />
+		<AgeRange />
+		<SortBy />
 
-		<button class="search-button" onclick={() => (ageError ? {} : handleApplyFilters())}
+		<button class="search-button" onclick={() => (filters.ageError ? {} : handleApplyFilters())}
 			>Apply Filters</button
+		>
+		<button class="reset-button" onclick={() => filters.resetFilters()}
+			>Reset Filters</button
 		>
 	</div>
 
@@ -236,12 +214,12 @@
 		{:else}
 			<div class="pagination-info">
 				<div>
-					Showing {(currentPage - 1) * itemsPerPage + 1} -
-					{Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} dogs
+					Showing {(currentPage - 1) * filters.itemsPerPage + 1} -
+					{Math.min(currentPage * filters.itemsPerPage, totalItems)} of {totalItems} dogs
 				</div>
 				<div>
 					Dogs per page:
-					<select bind:value={itemsPerPage} onchange={handleItemsPerPageChange}>
+					<select bind:value={filters.itemsPerPage} onchange={handleItemsPerPageChange}>
 						<option value={10}>10</option>
 						<option value={15}>15</option>
 						<option value={20}>20</option>
@@ -278,6 +256,18 @@
 		text-align: center;
 
 		&:hover {
+			background-color: var(--color-green);
+		}
+	}
+	.reset-button {
+		padding: 0.5rem 1rem;
+		background-color: var(--color-secondary-bg);
+		border-radius: 4px;
+		text-align: center;
+		margin-top: 1rem;
+
+		&:hover {
+			color: var(--color-white);
 			background-color: var(--color-green);
 		}
 	}

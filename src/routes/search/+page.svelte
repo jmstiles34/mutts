@@ -10,6 +10,7 @@
 	import BackToTop from '$lib/components/BackToTop.svelte';
 	import { filters } from '$lib/state/filters.svelte';
 	import { paging } from '$lib/state/paging.svelte';
+	import DogsPerPage from '$lib/components/filters/DogsPerPage.svelte';
 
 	let { data } = $props();
 	let breeds: string[] = $state(data.breeds);
@@ -162,8 +163,10 @@
 	}
 
 	function handleApplyFilters(): void {
-		paging.currentPage = 1;
-		searchDogs();
+		if (!filters.ageError.length) {
+			paging.currentPage = 1;
+			searchDogs();
+		}
 	}
 </script>
 
@@ -173,7 +176,7 @@
 		<AgeRange />
 		<SortBy />
 
-		<button class="search-button" onclick={() => (filters.ageError ? {} : handleApplyFilters())}
+		<button class="search-button" onclick={handleApplyFilters}
 			>Apply Filters</button
 		>
 		<button
@@ -220,18 +223,10 @@
 			<div class="pagination-info">
 				<div>
 					Showing {(paging.currentPage - 1) * filters.itemsPerPage + 1} -
-					{Math.min(paging.currentPage * filters.itemsPerPage, paging.totalItems)} of {paging.totalItems} dogs
+					{Math.min(paging.currentPage * filters.itemsPerPage, paging.totalItems)} of {paging.totalItems}
+					dogs
 				</div>
-				<div>
-					Dogs per page:
-					<select bind:value={filters.itemsPerPage} onchange={handleItemsPerPageChange}>
-						<option value={10}>10</option>
-						<option value={15}>15</option>
-						<option value={20}>20</option>
-						<option value={25}>25</option>
-						<option value={50}>50</option>
-					</select>
-				</div>
+				<DogsPerPage {handleItemsPerPageChange} />
 			</div>
 			<div class="dogs-grid">
 				{#each dogs as dog}
@@ -324,12 +319,6 @@
 		margin: 0 1.5rem;
 		gap: 0.5rem;
 		justify-content: space-between;
-	}
-	select {
-		margin-bottom: 0.5rem;
-		border: 1px solid var(--color-border);
-		border-radius: 4px;
-		padding: 0 8px;
 	}
 
 	.dogs-grid {

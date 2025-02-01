@@ -217,7 +217,7 @@
 					{/each}
 				</div>
 			{:else}
-				<p>No favorites selected...</p>
+				<div class="pagination-info">No favorites selected...</div>
 			{/if}
 		{:else}
 			<div class="pagination-info">

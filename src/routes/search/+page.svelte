@@ -7,6 +7,7 @@
 	import AgeRange from '$lib/components/filters/AgeRange.svelte';
 	import SortBy from '$lib/components/filters/SortBy.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
+	import BackToTop from '$lib/components/BackToTop.svelte';
 	let { data } = $props();
 	let breeds: string[] = $state(data.breeds);
 	let dogs: Dog[] = $state([]);
@@ -246,7 +247,6 @@
 						<option value={20}>20</option>
 						<option value={25}>25</option>
 						<option value={50}>50</option>
-						<option value={100}>100</option>
 					</select>
 				</div>
 			</div>
@@ -260,6 +260,8 @@
 		{/if}
 	</div>
 </section>
+
+<BackToTop />
 
 <style>
 	section {
@@ -339,7 +341,7 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 		gap: 2rem;
-		margin: .5rem 1.5rem;
+		margin: 0.5rem 1.5rem;
 	}
 
 	.error {

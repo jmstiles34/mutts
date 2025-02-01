@@ -9,15 +9,12 @@
 	import Pagination from '$lib/components/Pagination.svelte';
 	import BackToTop from '$lib/components/BackToTop.svelte';
 	import { filters } from '$lib/state/filters.svelte';
+	import { paging } from '$lib/state/paging.svelte';
 
 	let { data } = $props();
 	let breeds: string[] = $state(data.breeds);
 	let dogs: Dog[] = $state([]);
 	let favorites: Set<Dog> = $state(new Set());
-	let currentPage: number = $state(1);
-	let totalPages: number = $state(0);
-	let totalItems: number = $state(0);
-	let pages: number[] = $state([]);
 	let matchedDogId: string | null = $state(null);
 	let loading: boolean = $state(true);
 	let error: string = $state('');
@@ -31,8 +28,8 @@
 		const pageNumbers = [];
 		const maxVisiblePages = 5;
 
-		let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-		let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+		let startPage = Math.max(1, paging.currentPage - Math.floor(maxVisiblePages / 2));
+		let endPage = Math.min(paging.totalPages, startPage + maxVisiblePages - 1);
 
 		if (endPage - startPage + 1 < maxVisiblePages) {
 			startPage = Math.max(1, endPage - maxVisiblePages + 1);
@@ -42,14 +39,17 @@
 			pageNumbers.push(i);
 		}
 
-		pages = pageNumbers;
+		paging.pages = pageNumbers;
 	});
 
 	function buildSearchString(): string {
 		let searchString = `sort=${filters.sortField}:${filters.sortOrder}&size=${filters.itemsPerPage}`;
 		if (filters.selectedBreeds.size) {
 			searchString +=
-				'&' + [...filters.selectedBreeds].map((breed) => `breeds[]=${encodeURIComponent(breed)}`).join('&');
+				'&' +
+				[...filters.selectedBreeds]
+					.map((breed) => `breeds[]=${encodeURIComponent(breed)}`)
+					.join('&');
 		}
 
 		if (parseInt(filters.minAge) > 0) {
@@ -59,8 +59,8 @@
 			searchString += `&ageMax=${filters.maxAge}`;
 		}
 
-		if (currentPage > 1) {
-			searchString += `&from=${(currentPage - 1) * filters.itemsPerPage}`;
+		if (paging.currentPage > 1) {
+			searchString += `&from=${(paging.currentPage - 1) * filters.itemsPerPage}`;
 		}
 
 		return searchString;
@@ -95,8 +95,8 @@
 				});
 
 				dogs = await dogsResponse.json();
-				totalItems = total;
-				totalPages = Math.ceil(total / 25);
+				paging.totalItems = total;
+				paging.totalPages = Math.ceil(total / 25);
 			} else {
 				dogs = [];
 			}
@@ -150,9 +150,9 @@
 	}
 
 	async function handlePageChange(newPage: number): Promise<void> {
-		if (newPage < 1 || newPage > totalPages) return;
+		if (newPage < 1 || newPage > paging.totalPages) return;
 
-		currentPage = newPage;
+		paging.currentPage = newPage;
 		searchDogs();
 	}
 	async function handleItemsPerPageChange(event: Event): Promise<void> {
@@ -162,7 +162,7 @@
 	}
 
 	function handleApplyFilters(): void {
-		currentPage = 1;
+		paging.currentPage = 1;
 		searchDogs();
 	}
 </script>
@@ -176,8 +176,13 @@
 		<button class="search-button" onclick={() => (filters.ageError ? {} : handleApplyFilters())}
 			>Apply Filters</button
 		>
-		<button class="reset-button" onclick={() => filters.resetFilters()}
-			>Reset Filters</button
+		<button
+			class="reset-button"
+			onclick={() => {
+				filters.resetFilters();
+				paging.resetPaging();
+				searchDogs();
+			}}>Reset Filters</button
 		>
 	</div>
 
@@ -214,8 +219,8 @@
 		{:else}
 			<div class="pagination-info">
 				<div>
-					Showing {(currentPage - 1) * filters.itemsPerPage + 1} -
-					{Math.min(currentPage * filters.itemsPerPage, totalItems)} of {totalItems} dogs
+					Showing {(paging.currentPage - 1) * filters.itemsPerPage + 1} -
+					{Math.min(paging.currentPage * filters.itemsPerPage, paging.totalItems)} of {paging.totalItems} dogs
 				</div>
 				<div>
 					Dogs per page:
@@ -234,7 +239,7 @@
 				{/each}
 			</div>
 
-			<Pagination {currentPage} {handlePageChange} {pages} {totalPages} />
+			<Pagination {handlePageChange} />
 		{/if}
 	</div>
 </section>

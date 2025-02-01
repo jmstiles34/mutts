@@ -1,19 +1,18 @@
 <script lang="ts">
+	import { paging } from '$lib/state/paging.svelte';
+
 	type PaginationProps = {
-		currentPage: number;
-		pages: number[];
-    totalPages: number,
 		handlePageChange: (b: number) => void;
 	};
 
-	let { currentPage, handlePageChange, pages, totalPages }: PaginationProps = $props();
+	let { handlePageChange }: PaginationProps = $props();
 </script>
 
 <div class="pagination-container">
 	<div class="pagination">
 		<button
 			class="pagination-button"
-			disabled={currentPage === 1}
+			disabled={paging.currentPage === 1}
 			onclick={() => handlePageChange(1)}
 		>
 			«
@@ -21,15 +20,15 @@
 
 		<button
 			class="pagination-button"
-			disabled={currentPage === 1}
-			onclick={() => handlePageChange(currentPage - 1)}
+			disabled={paging.currentPage === 1}
+			onclick={() => handlePageChange(paging.currentPage - 1)}
 		>
 			‹
 		</button>
 
-		{#each pages as pageNum}
+		{#each paging.pages as pageNum}
 			<button
-				class="pagination-button {pageNum === currentPage ? 'active' : ''}"
+				class="pagination-button {pageNum === paging.currentPage ? 'active' : ''}"
 				onclick={() => handlePageChange(pageNum)}
 			>
 				{pageNum}
@@ -38,16 +37,16 @@
 
 		<button
 			class="pagination-button"
-			disabled={currentPage === totalPages}
-			onclick={() => handlePageChange(currentPage + 1)}
+			disabled={paging.currentPage === paging.totalPages}
+			onclick={() => handlePageChange(paging.currentPage + 1)}
 		>
 			›
 		</button>
 
 		<button
 			class="pagination-button"
-			disabled={currentPage === totalPages}
-			onclick={() => handlePageChange(totalPages)}
+			disabled={paging.currentPage === paging.totalPages}
+			onclick={() => handlePageChange(paging.totalPages)}
 		>
 			»
 		</button>

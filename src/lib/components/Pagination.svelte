@@ -67,6 +67,7 @@
 		display: flex;
 		gap: 0.5rem;
 		align-items: center;
+		margin-top: 1rem;
 	}
 
 	.pagination-button {

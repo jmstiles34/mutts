@@ -50,7 +50,7 @@
 	});
 
 	function buildSearchString(): string {
-		let searchString = `sort=${sortField}:${sortOrder}`;
+		let searchString = `sort=${sortField}:${sortOrder}&size=${itemsPerPage}`;
 		if (selectedBreeds.size) {
 			searchString +=
 				'&' + [...selectedBreeds].map((breed) => `breeds[]=${encodeURIComponent(breed)}`).join('&');
@@ -162,13 +162,13 @@
 		favorites = new Set(favorites);
 	}
 
-	function updateAgeRange(min:string, max:string, error:string): void {
+	function updateAgeRange(min: string, max: string, error: string): void {
 		minAge = min;
 		maxAge = max;
-		ageError = error
+		ageError = error;
 	}
 
-	function updateSortBy(field:string, order:'asc' | 'desc'): void {
+	function updateSortBy(field: string, order: 'asc' | 'desc'): void {
 		sortField = field;
 		sortOrder = order;
 	}
@@ -179,15 +179,25 @@
 		currentPage = newPage;
 		searchDogs();
 	}
+	async function handleItemsPerPageChange(event: Event): Promise<void> {
+		const target = event.target as HTMLSelectElement;
+		itemsPerPage = Number(target.value);
+		searchDogs();
+	}
+
+	function handleApplyFilters(): void {
+		currentPage = 1;
+		searchDogs();
+	}
 </script>
 
 <section>
 	<div class="filters">
-		<Breeds breeds={breeds} selectedBreeds={selectedBreeds} toggleBreed={toggleBreed} />
-		<AgeRange ageError={ageError} minAge={minAge} maxAge={maxAge} updateAgeRange={updateAgeRange} />
-		<SortBy sortField={sortField} sortOrder={sortOrder} updateSortBy={updateSortBy}/>
+		<Breeds {breeds} {selectedBreeds} {toggleBreed} />
+		<AgeRange {ageError} {minAge} {maxAge} {updateAgeRange} />
+		<SortBy {sortField} {sortOrder} {updateSortBy} />
 
-		<button class="search-button" onclick={() => (ageError ? {} : searchDogs())}
+		<button class="search-button" onclick={() => (ageError ? {} : handleApplyFilters())}
 			>Apply Filters</button
 		>
 	</div>
@@ -214,7 +224,7 @@
 		{:else if activeTab === 'favorites'}
 			{#if favorites.size}
 				<div class="dogs-grid">
-					<MatchCard generateMatch={generateMatch}/>
+					<MatchCard {generateMatch} />
 					{#each [...favorites] as dog}
 						<DogCard {dog} {matchedDogId} {favorites} {toggleFavorite} />
 					{/each}
@@ -224,8 +234,21 @@
 			{/if}
 		{:else}
 			<div class="pagination-info">
-				Showing {(currentPage - 1) * itemsPerPage + 1} -
-				{Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} dogs
+				<div>
+					Showing {(currentPage - 1) * itemsPerPage + 1} -
+					{Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} dogs
+				</div>
+				<div>
+					Dogs per page:
+					<select bind:value={itemsPerPage} onchange={handleItemsPerPageChange}>
+						<option value={10}>10</option>
+						<option value={15}>15</option>
+						<option value={20}>20</option>
+						<option value={25}>25</option>
+						<option value={50}>50</option>
+						<option value={100}>100</option>
+					</select>
+				</div>
 			</div>
 			<div class="dogs-grid">
 				{#each dogs as dog}
@@ -233,7 +256,7 @@
 				{/each}
 			</div>
 
-			<Pagination currentPage={currentPage} handlePageChange={handlePageChange} pages={pages} totalPages={totalPages} />
+			<Pagination {currentPage} {handlePageChange} {pages} {totalPages} />
 		{/if}
 	</div>
 </section>
@@ -297,11 +320,26 @@
 		color: var(--color-white);
 	}
 
+	.pagination-info {
+		display: flex;
+		color: var(--color-black);
+		font-size: var(--h5);
+		margin: 0 1.5rem;
+		gap: 0.5rem;
+		justify-content: space-between;
+	}
+	select {
+		margin-bottom: 0.5rem;
+		border: 1px solid var(--color-border);
+		border-radius: 4px;
+		padding: 0 8px;
+	}
+
 	.dogs-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 		gap: 2rem;
-		margin: 1.5rem;
+		margin: .5rem 1.5rem;
 	}
 
 	.error {
@@ -314,11 +352,5 @@
 		text-align: center;
 		color: #6c757d;
 		margin: 2rem 0;
-	}
-	.pagination-info {
-		color: var(--color-black);
-		font-size: var(--h5);
-		margin-left: 1.5rem;
-		text-align: center;
 	}
 </style>

@@ -176,9 +176,7 @@
 		<AgeRange />
 		<SortBy />
 
-		<button class="search-button" onclick={handleApplyFilters}
-			>Apply Filters</button
-		>
+		<button class="search-button" onclick={handleApplyFilters}>Apply Filters</button>
 		<button
 			class="reset-button"
 			onclick={() => {
@@ -277,6 +275,7 @@
 		flex-direction: column;
 		border-right: 1px solid var(--color-border);
 		padding: 1rem;
+		overflow-y: auto;
 	}
 
 	.search-results {

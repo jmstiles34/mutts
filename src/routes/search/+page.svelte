@@ -30,25 +30,7 @@
 
 	onMount(async () => {
 		await searchDogs();
-	});
-
-	$effect(() => {
-		const pageNumbers = [];
-		const maxVisiblePages = 5;
-
-		let startPage = Math.max(1, paging.currentPage - Math.floor(maxVisiblePages / 2));
-		let endPage = Math.min(paging.totalPages, startPage + maxVisiblePages - 1);
-
-		if (endPage - startPage + 1 < maxVisiblePages) {
-			startPage = Math.max(1, endPage - maxVisiblePages + 1);
-		}
-
-		for (let i = startPage; i <= endPage; i++) {
-			pageNumbers.push(i);
-		}
-
-		paging.pages = pageNumbers;
-	});
+	}); 
 
 	function buildSearchString(): string {
 		let searchString = `sort=${filters.sortField}:${filters.sortOrder}&size=${filters.itemsPerPage}`;

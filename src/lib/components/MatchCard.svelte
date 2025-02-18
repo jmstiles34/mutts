@@ -7,12 +7,26 @@
 </script>
 
 <div class="match-card">
-	<h3>Match Maker</h3>
 	<p>
-		Wow, look at all these amazing mutts you've selected! Any one of them could be your new
+		Look at all the amazing mutts you've selected! Any one of them could be your new
 		best friend. Ready to discover your perfect match?
 	</p>
-	<button onclick={generateMatch}> Show Me My Mutt! </button>
+	<button class="circular-button" onclick={generateMatch}><svg viewBox="0 0 100 100">
+      <path id="curve" 
+            d="M 50,50 m -37,0 a 37,37 0 1,1 74,0" 
+            fill="transparent"/>
+      <text class="circular-text">
+        <textPath href="#curve" startOffset="5%">
+          Show Me My Mutt!
+        </textPath>
+      </text>
+    </svg>
+		<img
+				src="/dog-paw.svg"
+				class="paw-image"
+				alt="Red speech bubble with word 'hi' inside followed by red word marley"
+			/>   
+	</button>
 </div>
 
 <style>
@@ -38,20 +52,54 @@
 		color: var(--color-black);
 	}
 
-	button {
+	/* button {
+		background-image: url('/dog-paw.svg');
+		background-size:contain;
+  background-position: center;
+  background-repeat: no-repeat;
 		padding: 1rem 0.5rem;
-		background-color: #28a745;
 		color: var(--color-white);
 		border: none;
 		border-radius: 4px;
 		font-size: var(--20px);
-		width: 100%;
 		text-align: center;
-		margin-top: auto;
 		justify-self: end;
+		height: 100%;
 
     &:hover {
-      background-color: var(--color-olive);
+			fill: var(--color-olive);
     }
-	}
+	} */
+
+	.circular-button {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: none;
+      background-color: var(--color-green);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.3s;
+			align-self: center;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .circular-button:hover {
+			.paw-image {
+      	transform: translateY(-110px) scale(1.10);
+			}
+    }
+
+    .circular-text {
+      fill: white;
+      font-size: 12px;
+			font-weight: bold;
+    }
+
+		.paw-image {
+			transform: translateY(-110px);
+			width: 65%;
+			margin: 0 auto;
+			transition: transform 0.3s;
+		}
 </style>

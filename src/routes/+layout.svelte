@@ -15,16 +15,13 @@
 
 <svelte:head>
 	<title>{page.data.title ?? 'Mutts & Matches'}</title>
-	<meta name="description" content="A matchmaking service for mutts!" />
+	<meta name="description" content="A matchmaking service for humans and mutts!" />
 </svelte:head>
 
 <main>
 	<header>
 		<div class="logo-group">
-			<img
-				src="/bulldog.svg"
-				alt="Red speech bubble with word 'hi' inside followed by red word marley"
-			/>
+			<img src="/bulldog.svg" alt="A brown cartoon bulldog in a sitting position." />
 			<h1>Mutts & Matches</h1>
 		</div>
 		{#if page.url.pathname === '/search'}

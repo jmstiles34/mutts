@@ -31,3 +31,8 @@ export interface SearchResponse {
 export interface MatchResponse {
 	match: string;
 }
+
+export interface FormElements extends HTMLFormControlsCollection {
+	name: HTMLInputElement;
+	email: HTMLInputElement;
+}

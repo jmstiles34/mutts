@@ -42,34 +42,10 @@
 		height: 100%;
 	}
 
-	h3 {
-		font-size: var(--h5);
-		color: var(--color-black);
-	}
-
 	p {
 		margin: 0.25rem 0;
 		color: var(--color-black);
 	}
-
-	/* button {
-		background-image: url('/dog-paw.svg');
-		background-size:contain;
-  background-position: center;
-  background-repeat: no-repeat;
-		padding: 1rem 0.5rem;
-		color: var(--color-white);
-		border: none;
-		border-radius: 4px;
-		font-size: var(--20px);
-		text-align: center;
-		justify-self: end;
-		height: 100%;
-
-    &:hover {
-			fill: var(--color-olive);
-    }
-	} */
 
 	.circular-button {
       width: 150px;
@@ -82,6 +58,8 @@
       transition: transform 0.3s;
 			align-self: center;
 			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+			margin-top: auto;
+			margin-bottom: auto;
     }
 
     .circular-button:hover {

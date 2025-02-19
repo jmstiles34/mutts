@@ -1,36 +1,36 @@
-export interface Dog {
+export type Dog = {
 	id: string;
 	img: string;
 	name: string;
 	age: number;
 	zip_code: string;
 	breed: string;
-}
+};
 
-export interface Location {
+export type Location = {
 	zip_code: string;
 	latitude: number;
 	longitude: number;
 	city: string;
 	state: string;
 	county: string;
-}
+};
 
-export interface Coordinates {
+export type Coordinates = {
 	lat: number;
 	lon: number;
-}
+};
 
-export interface SearchResponse {
+export type SearchResponse = {
 	resultIds: string[];
 	total: number;
 	next: string;
 	prev: string;
-}
+};
 
-export interface MatchResponse {
+export type MatchResponse = {
 	match: string;
-}
+};
 
 export interface FormElements extends HTMLFormControlsCollection {
 	name: HTMLInputElement;

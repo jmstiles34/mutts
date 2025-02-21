@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import '../styles.css';
+	import { session } from '$lib/state/session.svelte';
 
 	let { children } = $props();
 
@@ -9,6 +10,7 @@
 			method: 'POST',
 			credentials: 'include'
 		});
+		session.clearSession();
 		window.location.href = '/';
 	}
 </script>

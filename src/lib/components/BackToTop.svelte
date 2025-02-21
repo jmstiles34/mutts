@@ -3,6 +3,7 @@
 
 	let showButton = false;
 	let searchResults: Element | null = null;
+	const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 	const handleScroll = () => {
 		if (searchResults) {
@@ -15,7 +16,7 @@
 	const scrollToTop = () => {
 		searchResults?.scrollTo({
 			top: 0,
-			behavior: 'smooth'
+			behavior: prefersReducedMotion ? 'auto' : 'smooth'
 		});
 	};
 

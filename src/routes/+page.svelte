@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { session } from '$lib/state/session.svelte';
 
 	let name: string = $state('');
 	let email: string = $state('');
@@ -18,6 +19,8 @@
 			});
 
 			if (response.ok) {
+				session.name = name;
+				session.email = email;
 				goto('/search');
 			} else {
 				error = 'Login failed. Please check your credentials.';

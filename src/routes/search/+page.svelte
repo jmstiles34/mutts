@@ -10,12 +10,19 @@
 	import BackToTop from '$lib/components/BackToTop.svelte';
 	import { filters } from '$lib/state/filters.svelte';
 	import { paging } from '$lib/state/paging.svelte';
+	import { session } from '$lib/state/session.svelte';
 	import DogsPerPage from '$lib/components/filters/DogsPerPage.svelte';
+
+	function getStoredFavorites(): Set<Dog> {
+		//localStorage.removeItem(`${session.name}_favs`)
+		let storedFavorites = localStorage.getItem(`${session.name}_favs`);
+		return storedFavorites ? new Set([...JSON.parse(storedFavorites)]) : new Set();
+	}
 
 	let { data } = $props();
 	let breeds: string[] = $state(data.breeds);
 	let dogs: Dog[] = $state([]);
-	let favorites: Set<Dog> = $state(new Set());
+	let favorites: Set<Dog> = $state(getStoredFavorites());
 	let matchedDogId: string | null = $state(null);
 	let loading: boolean = $state(true);
 	let error: string = $state('');
@@ -23,25 +30,7 @@
 
 	onMount(async () => {
 		await searchDogs();
-	});
-
-	$effect(() => {
-		const pageNumbers = [];
-		const maxVisiblePages = 5;
-
-		let startPage = Math.max(1, paging.currentPage - Math.floor(maxVisiblePages / 2));
-		let endPage = Math.min(paging.totalPages, startPage + maxVisiblePages - 1);
-
-		if (endPage - startPage + 1 < maxVisiblePages) {
-			startPage = Math.max(1, endPage - maxVisiblePages + 1);
-		}
-
-		for (let i = startPage; i <= endPage; i++) {
-			pageNumbers.push(i);
-		}
-
-		paging.pages = pageNumbers;
-	});
+	}); 
 
 	function buildSearchString(): string {
 		let searchString = `sort=${filters.sortField}:${filters.sortOrder}&size=${filters.itemsPerPage}`;
@@ -148,6 +137,11 @@
 			favorites.add(dog);
 		}
 		favorites = new Set(favorites);
+		if (favorites.size) {
+			localStorage.setItem(`${session.name}_favs`, JSON.stringify([...favorites]));
+		} else {
+			localStorage.removeItem(`${session.name}_favs`);
+		}
 	}
 
 	async function handlePageChange(newPage: number): Promise<void> {
